@@ -18,15 +18,15 @@ class SchemaTest {
     @Serializable
     data class Box<T>(val boxed: T)
 
-    @Serializable
-    data class Data1(val l: List<Int> = emptyList(), val s: String) {
-        @Serializer(forClass = Data1::class)
-        companion object {
-            // TODO removal of explicit type crashes the compiler
-            override val descriptor: SerialDescriptor = buildClassSerialDescriptor("Data1") {
-                element("l", listSerialDescriptor<Int>(), isOptional = true)
-                element("s", serialDescriptor<String>())
-            }
+    @Serializable(Data1Serializer::class)
+    data class Data1(val l: List<Int> = emptyList(), val s: String)
+
+    @Serializer(forClass = Data1::class)
+    object Data1Serializer {
+        // TODO removal of explicit type crashes the compiler
+        override val descriptor: SerialDescriptor = buildClassSerialDescriptor("Data1") {
+            element("l", listSerialDescriptor<Int>(), isOptional = true)
+            element("s", serialDescriptor<String>())
         }
     }
 

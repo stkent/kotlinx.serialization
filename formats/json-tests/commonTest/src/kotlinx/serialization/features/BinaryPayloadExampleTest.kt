@@ -14,9 +14,8 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class BinaryPayloadExampleTest {
-    @Serializable
+    @Serializable(BinaryPayload.Companion::class)
     class BinaryPayload(val req: ByteArray, val res: ByteArray) {
-        @Serializer(forClass = BinaryPayload::class)
         companion object : KSerializer<BinaryPayload> {
             override val descriptor: SerialDescriptor = buildClassSerialDescriptor("BinaryPayload") {
                 element("req", ByteArraySerializer().descriptor)

@@ -10,15 +10,15 @@ import kotlinx.serialization.json.Json
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-@Serializable
-data class WithNull(@SerialName("value") val nullable: String? = null) {
-    @Serializer(forClass = WithNull::class)
-    companion object : KSerializer<WithNull> {
-        override fun serialize(encoder: Encoder, value: WithNull) {
-            val elemOutput = encoder.beginStructure(descriptor)
-            if (value.nullable != null) elemOutput.encodeStringElement(descriptor, 0, value.nullable)
-            elemOutput.endStructure(descriptor)
-        }
+@Serializable(WithNullSerializer::class)
+data class WithNull(@SerialName("value") val nullable: String? = null)
+
+@Serializer(forClass = WithNull::class)
+object WithNullSerializer : KSerializer<WithNull> {
+    override fun serialize(encoder: Encoder, value: WithNull) {
+        val elemOutput = encoder.beginStructure(descriptor)
+        if (value.nullable != null) elemOutput.encodeStringElement(descriptor, 0, value.nullable)
+        elemOutput.endStructure(descriptor)
     }
 }
 

@@ -23,8 +23,8 @@ value class ComplexCarrier(val c: IntData)
 @Serializable
 value class PrimitiveCarrier(val c: String)
 
+@Serializable(ContextualValue.Companion::class)
 data class ContextualValue(val c: String) {
-    @Serializer(forClass = ContextualValue::class)
     companion object: KSerializer<ContextualValue> {
         override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("ContextualValue", PrimitiveKind.STRING)
 

@@ -34,74 +34,74 @@ class JsonCustomSerializersTest : JsonTestBase() {
     @Serializable
     data class BList(@Id(1) val bs: List<B>)
 
-    @Serializable
-    data class C(@Id(1) val a: Int = 31, @Id(2) val b: Int = 42) {
-        @Serializer(forClass = C::class)
-        companion object : KSerializer<C> {
-            override fun serialize(encoder: Encoder, value: C) {
-                val elemOutput = encoder.beginStructure(descriptor)
-                elemOutput.encodeIntElement(descriptor, 1, value.b)
-                if (value.a != 31) elemOutput.encodeIntElement(descriptor, 0, value.a)
-                elemOutput.endStructure(descriptor)
-            }
+    @Serializable(CSerializer::class)
+    data class C(@Id(1) val a: Int = 31, @Id(2) val b: Int = 42)
+
+    @Serializer(forClass = C::class)
+    object CSerializer : KSerializer<C> {
+        override fun serialize(encoder: Encoder, value: C) {
+            val elemOutput = encoder.beginStructure(descriptor)
+            elemOutput.encodeIntElement(descriptor, 1, value.b)
+            if (value.a != 31) elemOutput.encodeIntElement(descriptor, 0, value.a)
+            elemOutput.endStructure(descriptor)
         }
     }
 
     @Serializable
     data class CList1(@Id(1) val c: List<C>)
 
-    @Serializable
-    data class CList2(@Id(1) val d: Int = 5, @Id(2) val c: List<C>) {
-        @Serializer(forClass = CList2::class)
-        companion object : KSerializer<CList2> {
-            override fun serialize(encoder: Encoder, value: CList2) {
-                val elemOutput = encoder.beginStructure(descriptor)
-                elemOutput.encodeSerializableElement(descriptor, 1, ListSerializer(C), value.c)
-                if (value.d != 5) elemOutput.encodeIntElement(descriptor, 0, value.d)
-                elemOutput.endStructure(descriptor)
-            }
+    @Serializable(CList2Serializer::class)
+    data class CList2(@Id(1) val d: Int = 5, @Id(2) val c: List<C>)
+
+    @Serializer(forClass = CList2::class)
+    object CList2Serializer : KSerializer<CList2> {
+        override fun serialize(encoder: Encoder, value: CList2) {
+            val elemOutput = encoder.beginStructure(descriptor)
+            elemOutput.encodeSerializableElement(descriptor, 1, ListSerializer(CSerializer), value.c)
+            if (value.d != 5) elemOutput.encodeIntElement(descriptor, 0, value.d)
+            elemOutput.endStructure(descriptor)
         }
     }
 
-    @Serializable
-    data class CList3(@Id(1) val e: List<C> = emptyList(), @Id(2) val f: Int) {
-        @Serializer(forClass = CList3::class)
-        companion object : KSerializer<CList3> {
-            override fun serialize(encoder: Encoder, value: CList3) {
-                val elemOutput = encoder.beginStructure(descriptor)
-                if (value.e.isNotEmpty()) elemOutput.encodeSerializableElement(descriptor, 0, ListSerializer(C), value.e)
-                elemOutput.encodeIntElement(descriptor, 1, value.f)
-                elemOutput.endStructure(descriptor)
-            }
+    @Serializable(CList3Serializer::class)
+    data class CList3(@Id(1) val e: List<C> = emptyList(), @Id(2) val f: Int)
+
+    @Serializer(forClass = CList3::class)
+    object CList3Serializer : KSerializer<CList3> {
+        override fun serialize(encoder: Encoder, value: CList3) {
+            val elemOutput = encoder.beginStructure(descriptor)
+            if (value.e.isNotEmpty()) elemOutput.encodeSerializableElement(descriptor, 0, ListSerializer(CSerializer), value.e)
+            elemOutput.encodeIntElement(descriptor, 1, value.f)
+            elemOutput.endStructure(descriptor)
         }
     }
 
-    @Serializable
-    data class CList4(@Id(1) val g: List<C> = emptyList(), @Id(2) val h: Int) {
-        @Serializer(forClass = CList4::class)
-        companion object : KSerializer<CList4> {
-            override fun serialize(encoder: Encoder, value: CList4) {
-                val elemOutput = encoder.beginStructure(descriptor)
-                elemOutput.encodeIntElement(descriptor, 1, value.h)
-                if (value.g.isNotEmpty()) elemOutput.encodeSerializableElement(descriptor, 0, ListSerializer(C), value.g)
-                elemOutput.endStructure(descriptor)
-            }
+    @Serializable(CList4Serializer::class)
+    data class CList4(@Id(1) val g: List<C> = emptyList(), @Id(2) val h: Int)
+
+    @Serializer(forClass = CList4::class)
+    object CList4Serializer : KSerializer<CList4> {
+        override fun serialize(encoder: Encoder, value: CList4) {
+            val elemOutput = encoder.beginStructure(descriptor)
+            elemOutput.encodeIntElement(descriptor, 1, value.h)
+            if (value.g.isNotEmpty()) elemOutput.encodeSerializableElement(descriptor, 0, ListSerializer(CSerializer), value.g)
+            elemOutput.endStructure(descriptor)
         }
     }
 
-    @Serializable
-    data class CList5(@Id(1) val g: List<Int> = emptyList(), @Id(2) val h: Int) {
-        @Serializer(forClass = CList5::class)
-        companion object : KSerializer<CList5> {
-            override fun serialize(encoder: Encoder, value: CList5) {
-                val elemOutput = encoder.beginStructure(descriptor)
-                elemOutput.encodeIntElement(descriptor, 1, value.h)
-                if (value.g.isNotEmpty()) elemOutput.encodeSerializableElement(
-                    descriptor, 0, ListSerializer(Int.serializer()),
-                    value.g
-                )
-                elemOutput.endStructure(descriptor)
-            }
+    @Serializable(CList5Serializer::class)
+    data class CList5(@Id(1) val g: List<Int> = emptyList(), @Id(2) val h: Int)
+
+    @Serializer(forClass = CList5::class)
+    object CList5Serializer : KSerializer<CList5> {
+        override fun serialize(encoder: Encoder, value: CList5) {
+            val elemOutput = encoder.beginStructure(descriptor)
+            elemOutput.encodeIntElement(descriptor, 1, value.h)
+            if (value.g.isNotEmpty()) elemOutput.encodeSerializableElement(
+                descriptor, 0, ListSerializer(Int.serializer()),
+                value.g
+            )
+            elemOutput.endStructure(descriptor)
         }
     }
 
@@ -191,7 +191,7 @@ class JsonCustomSerializersTest : JsonTestBase() {
     @Test
     fun testWriteListOfOptional() = parametrizedTest { jsonTestingMode ->
         val obj = listOf(C(a = 1), C(b = 2), C(3, 4))
-        val s = jsonNoAltNames.encodeToString(ListSerializer(C), obj, jsonTestingMode)
+        val s = jsonNoAltNames.encodeToString(ListSerializer(CSerializer), obj, jsonTestingMode)
         assertEquals("""[{"b":42,"a":1},{"b":2},{"b":4,"a":3}]""", s)
     }
 
@@ -199,7 +199,7 @@ class JsonCustomSerializersTest : JsonTestBase() {
     fun testReadListOfOptional() = parametrizedTest { jsonTestingMode ->
         val obj = listOf(C(a = 1), C(b = 2), C(3, 4))
         val j = """[{"b":42,"a":1},{"b":2},{"b":4,"a":3}]"""
-        val s = jsonNoAltNames.decodeFromString(ListSerializer<C>(C), j, jsonTestingMode)
+        val s = jsonNoAltNames.decodeFromString(ListSerializer(CSerializer), j, jsonTestingMode)
         assertEquals(obj, s)
     }
 

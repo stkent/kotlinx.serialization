@@ -4,10 +4,11 @@ import kotlinx.serialization.*
 import kotlinx.serialization.json.*
 import kotlin.test.*
 
+@MetaSerializable
+@Target(AnnotationTarget.PROPERTY, AnnotationTarget.CLASS)
+private annotation class JsonComment(val comment: String)
+
 class MetaSerializableJsonTest : JsonTestBase() {
-    @MetaSerializable
-    @Target(AnnotationTarget.PROPERTY, AnnotationTarget.CLASS)
-    annotation class JsonComment(val comment: String)
 
     @JsonComment("class_comment")
     data class IntDataCommented(val i: Int)
