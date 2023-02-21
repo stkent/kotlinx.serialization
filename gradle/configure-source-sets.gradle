@@ -33,6 +33,8 @@ kotlin {
         kotlin.srcDirs = ["$it.name/src"]
         resources.srcDirs = ["$it.name/resources"]
         languageSettings {
+            apiVersion = "2.0"
+            languageVersion = "2.0"
             progressiveMode = true
 
             optIn("kotlin.ExperimentalMultiplatform")
@@ -97,7 +99,7 @@ kotlin {
     targets.all {
         compilations.main {
             kotlinOptions {
-                allWarningsAsErrors = true
+                allWarningsAsErrors = false
             }
         }
     }

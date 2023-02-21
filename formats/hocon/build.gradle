@@ -7,8 +7,17 @@ apply plugin: 'kotlinx-serialization'
 
 compileKotlin {
     kotlinOptions {
-        allWarningsAsErrors = true
+        apiVersion = "2.0"
+        languageVersion = "2.0"
+        allWarningsAsErrors = false
         jvmTarget = '1.8'
+    }
+}
+
+compileTestKotlin {
+    kotlinOptions {
+        apiVersion = "2.0"
+        languageVersion = "2.0"
     }
 }
 

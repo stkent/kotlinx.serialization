@@ -5,6 +5,13 @@
 apply plugin: 'kotlin'
 apply plugin: 'kotlinx-serialization'
 
+compileTestKotlin {
+    kotlinOptions {
+        apiVersion = "2.0"
+        languageVersion = "2.0"
+    }
+}
+
 kotlin {
     jvmToolchain(8)
 }
