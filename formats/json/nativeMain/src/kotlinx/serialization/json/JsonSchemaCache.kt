@@ -7,6 +7,7 @@ package kotlinx.serialization.json
 import kotlinx.serialization.json.internal.*
 import kotlin.native.ref.*
 import kotlin.random.*
+import kotlin.native.concurrent.ThreadLocal
 
 /**
  * This maps emulate thread-locality of DescriptorSchemaCache for Native.
@@ -26,14 +27,18 @@ private val jsonToCache: MutableMap<WeakJson, DescriptorSchemaCache> = mutableMa
  * Because WeakReference itself does not have proper equals/hashCode
  */
 private class WeakJson(json: Json) {
+    @OptIn(kotlin.experimental.ExperimentalNativeApi::class)
     private val ref = WeakReference(json)
     private val initialHashCode = json.hashCode()
 
+    @OptIn(kotlin.experimental.ExperimentalNativeApi::class)
     val isDead: Boolean get() = ref.get() == null
 
     override fun equals(other: Any?): Boolean {
         if (other !is WeakJson) return false
+        @OptIn(kotlin.experimental.ExperimentalNativeApi::class)
         val thiz = this.ref.get() ?: return false
+        @OptIn(kotlin.experimental.ExperimentalNativeApi::class)
         val that = other.ref.get() ?: return false
         return thiz == that
     }
