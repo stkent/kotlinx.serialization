@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockStoreTask
+
 /*
  * Copyright 2017-2022 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license.
  */
@@ -121,6 +123,11 @@ dependencies {
 }
 
 allprojects {
+    // this (hopefully temporary) snippet disables kotlinStoreYarnLock task that's not necessary in KUP branch
+    tasks.withType(YarnLockStoreTask).configureEach {
+        enabled = false
+    }
+
     // this snippet disables all project tests for purposes of testing of Kotlin compiler dev builds
     if (are_project_tests_disabled) {
         tasks.withType(AbstractTestTask.class).configureEach {
