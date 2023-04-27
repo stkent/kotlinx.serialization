@@ -15,6 +15,8 @@ repositories {
     if (project.hasProperty("kotlin_repo_url")) {
         maven(project.properties["kotlin_repo_url"] as String)
     }
+    // kotlin-dev with space redirector
+    maven("https://cache-redirector.jetbrains.com/maven.pkg.jetbrains.space/kotlin/p/kotlin/dev")
 }
 
 val kotlinVersion = run {
